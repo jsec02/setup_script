@@ -121,6 +121,23 @@ install_yazi() {
     esac
 }
 
+install_zellij() {
+    case "$MACHINE" in
+        pi)
+            $CURL \
+                "https://github.com/zellij-org/zellij/releases/latest/download/zellij-aarch64-unknown-linux-musl.tar.gz" \
+                | gzip --decompress --stdout \
+                | sudo tar --extract --file=- --directory=/usr/local/bin
+            ;;
+        kali)
+            $CURL \
+                "https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz" \
+                | gzip --decompress --stdout \
+                | sudo tar --extract --file=- --directory=/usr/local/bin
+            ;;
+    esac
+}
+
 install_deskflow() {
     local version
     # Extract version from json
@@ -143,10 +160,12 @@ install_optional_software() {
         pi)
             install_neovim
             install_yazi
+            install_zellij
             ;;
         kali)
             install_neovim
             install_yazi
+            install_zellij
             install_deskflow
             ;;
     esac
