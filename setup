@@ -64,9 +64,15 @@ install_packages() {
                 | xargs --no-run-if-empty sudo apt install --yes
             ;;
 
-        kali) $CURL \
-            https://raw.githubusercontent.com/jb49088/packages/master/kali/apt.txt \
-            | xargs --no-run-if-empty sudo apt install --yes ;;
+        kali)
+            $CURL \
+                https://raw.githubusercontent.com/jb49088/packages/master/kali/apt.txt \
+                | xargs --no-run-if-empty sudo apt install --yes
+
+            $CURL \
+                https://raw.githubusercontent.com/jb49088/packages/master/kali/pip.txt \
+                | xargs --no-run-if-empty pip install --break-system-packages
+            ;;
     esac
 }
 
