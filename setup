@@ -51,6 +51,12 @@ bootstrap_yay() {
     rm --recursive --force "tmp/yay"
 }
 
+install_pip2() {
+    $CURL_FILE "/tmp/get-pip.py" \
+        https://bootstrap.pypa.io/pip/2.7/get-pip.py
+    python2 "/tmp/get-pip.py"
+}
+
 install_packages() {
     case "$MACHINE" in
         # Get list of packages and pass it into corresponding package manager with xargs
@@ -70,8 +76,13 @@ install_packages() {
                 | xargs --no-run-if-empty sudo apt install --yes
 
             $CURL \
-                https://raw.githubusercontent.com/jb49088/packages/master/kali/pip.txt \
+                https://raw.githubusercontent.com/jb49088/packages/master/kali/pip3.txt \
                 | xargs --no-run-if-empty pip install --break-system-packages
+
+            install_pip2
+            $CURL \
+                https://raw.githubusercontent.com/jb49088/packages/master/kali/pip2.txt \
+                | xargs --no-run-if-empty pip2 install
             ;;
     esac
 }
