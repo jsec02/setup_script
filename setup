@@ -62,27 +62,27 @@ install_packages() {
     case "$MACHINE" in
         # Get list of packages and pass it into corresponding package manager with xargs
         wsl) $CURL \
-            https://raw.githubusercontent.com/jb49088/packages/master/wsl/yay.txt \
+            https://raw.githubusercontent.com/jsec02/packages/master/wsl/yay.txt \
             | xargs --no-run-if-empty yay -S --noconfirm ;;
 
         pi)
             $CURL \
-                https://raw.githubusercontent.com/jb49088/packages/master/pi/apt.txt \
+                https://raw.githubusercontent.com/jsec02/packages/master/pi/apt.txt \
                 | xargs --no-run-if-empty sudo apt install --yes
             ;;
 
         kali)
             $CURL \
-                https://raw.githubusercontent.com/jb49088/packages/master/kali/apt.txt \
+                https://raw.githubusercontent.com/jsec02/packages/master/kali/apt.txt \
                 | xargs --no-run-if-empty sudo apt install --yes
 
             $CURL \
-                https://raw.githubusercontent.com/jb49088/packages/master/kali/pip3.txt \
+                https://raw.githubusercontent.com/jsec02/packages/master/kali/pip3.txt \
                 | xargs --no-run-if-empty pip install --break-system-packages
 
             install_pip2
             $CURL \
-                https://raw.githubusercontent.com/jb49088/packages/master/kali/pip2.txt \
+                https://raw.githubusercontent.com/jsec02/packages/master/kali/pip2.txt \
                 | xargs --no-run-if-empty pip2 install
             ;;
     esac
