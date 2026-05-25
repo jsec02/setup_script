@@ -220,6 +220,11 @@ restore_from_restic() {
     sudo chown -R "$USER:$USER" "$HOME/.cache/restic"
 }
 
+setup_metasploit() {
+    sudo systemctl enable --now postgresql
+    sudo msfdb init
+}
+
 setup_tldr() {
     tldr --update
 }
@@ -359,6 +364,7 @@ setup_kali() {
     install_optional_software
     prompt_for_secrets
     restore_from_restic
+    setup_metasploit
     setup_tldr
     decompress_rockyou
     setup_services
