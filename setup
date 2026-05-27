@@ -150,18 +150,6 @@ install_zellij() {
     esac
 }
 
-setup_dashboard() {
-    sudo docker run --detach --name homepage \
-        -e HOMEPAGE_ALLOWED_HOSTS=10.0.0.30:3000 \
-        -e PUID=1000 \
-        -e PGID=1000 \
-        -p 3000:3000 \
-        -v "$HOME/.config/homepage:/app/config" \
-        -v "/var/run/docker.sock:/var/run/docker.sock:ro" \
-        --restart unless-stopped \
-        ghcr.io/gethomepage/homepage:latest
-}
-
 install_deskflow() {
     local version
     # Extract version from json
@@ -185,7 +173,6 @@ install_optional_software() {
             install_neovim
             install_yazi
             install_zellij
-            setup_dashboard
             ;;
         kali)
             install_neovim
@@ -236,6 +223,22 @@ restore_from_restic() {
 setup_metasploit() {
     sudo systemctl enable --now postgresql
     sudo msfdb init
+}
+
+setup_dashboard() {
+    sudo docker run --detach --name homepage \
+        -e HOMEPAGE_ALLOWED_HOSTS=10.0.0.30:3000 \
+        -e PUID=1000 \
+        -e PGID=1000 \
+        -p 3000:3000 \
+        -v "$HOME/.config/homepage:/app/config" \
+        -v "/var/run/docker.sock:/var/run/docker.sock:ro" \
+        --restart unless-stopped \
+        ghcr.io/gethomepage/homepage:latest
+}
+
+setup_glances() {
+    sudo systemctl enable --now glances-web
 }
 
 setup_tldr() {
@@ -364,6 +367,8 @@ setup_pi() {
     prompt_for_secrets
     restore_from_restic
     create_restic_repo
+    setup_dashboard
+    setup_glances
     setup_tldr
     setup_uv
     setup_venvs
