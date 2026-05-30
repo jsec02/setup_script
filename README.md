@@ -7,7 +7,18 @@ Automates post-installation environment replication across WSL, Raspberry Pi, an
 This script assumes a user account is setup and logged in, as well as curl being installed.
 
 ```sh
-bash <(curl -sSL https://raw.githubusercontent.com/jb49088/setup_script/master/setup)
+bash <(curl -sSL https://raw.githubusercontent.com/jsec02/setup_script/master/setup)
+```
+
+On WSL, no installer is run first so we manually create a user and configure sudo before running.
+
+```sh
+pacman -Sy sudo
+useradd -m -G wheel master
+passwd master
+sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+su master
+bash <(curl -sSL https://raw.githubusercontent.com/jsec02/setup_script/master/setup)
 ```
 
 <!-- CODE_STATISTICS_START -->
