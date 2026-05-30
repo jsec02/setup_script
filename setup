@@ -412,7 +412,7 @@ main() {
     sudo rm "/etc/sudoers.d/nopasswd"
 
     if command -v zsh >/dev/null; then
-        chsh --shell "$(command -v zsh)"
+        chsh --shell "/usr/bin/zsh"
         exec zsh
     fi
 }

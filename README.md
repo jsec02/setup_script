@@ -43,8 +43,8 @@ SUM:                              2             84             23            353
 
 ```
 setup_script
-├── README.md
-└── setup
+|-- README.md
+`-- setup
 
 1 directory, 2 files
 ```
