@@ -10,7 +10,7 @@ This script assumes a user account is setup and logged in, as well as curl being
 bash <(curl -sSL https://raw.githubusercontent.com/jsec02/setup_script/master/setup)
 ```
 
-On WSL, no installer is run first so we manually create a user and configure sudo before running. Additionally, restart session post execution to silence locale error messages.
+On WSL, no installer is run first so we manually create a user and configure sudo before running.
 
 ```sh
 pacman -Sy sudo
