@@ -208,7 +208,11 @@ restore_from_restic() {
     while read -r tag sudo; do
         local cmd="restic"
         [[ "$sudo" == "true" ]] && cmd="sudo --preserve-env restic"
-        $cmd restore latest --tag "$tag" --host "$MACHINE" --target / </dev/tty
+
+        # </dev/tty: allows ssh interactive prompts to reach the terminal through the while read loop
+        # || true: restic exits non-zero when it cannot chown NTFS paths (e.g. /mnt/c in WSL)
+        $cmd restore latest --tag "$tag" --host "$MACHINE" --target / </dev/tty || true
+
     done < <(python "$HOME/inventory/parser.py" tags "$MACHINE")
 
     # Fix cache permissions after sudo restores
