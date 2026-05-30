@@ -204,11 +204,11 @@ prompt_for_secrets() {
 }
 
 restore_from_restic() {
-    # Parser must return "ssh" tag first for passwordless auth, preventing hanging
+    # Parser should return "ssh" tag first for passwordless auth
     while read -r tag sudo; do
         local cmd=()
-        [[ "$sudo" == "true" ]] && cmd=(sudo --preserve-env)
-        "${cmd[@]}" restic restore latest --tag "$tag" --host "$MACHINE" --target /
+        [[ "$sudo" == "true" ]] && cmd=(sudo --preserve-env restic)
+        "${cmd[@]}" restore latest --tag "$tag" --host "$MACHINE" --target /
     done < <(python "$HOME/inventory/parser.py" tags "$MACHINE")
 
     # Fix cache permissions after sudo restores
