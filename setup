@@ -51,6 +51,11 @@ bootstrap_yay() {
     rm --recursive --force "/tmp/yay"
 }
 
+bootstrap_inventory() {
+    sudo pacman -S --noconfirm git
+    git clone https://github.com/jsec02/inventory.git
+}
+
 install_pip2() {
     $CURL_FILE "/tmp/get-pip.py" \
         https://bootstrap.pypa.io/pip/2.7/get-pip.py
@@ -61,29 +66,21 @@ install_pip2() {
 install_packages() {
     case "$MACHINE" in
         # Get list of packages and pass it into corresponding package manager with xargs
-        wsl) $CURL \
-            https://raw.githubusercontent.com/jsec02/packages/master/wsl/yay.txt \
-            | xargs --no-run-if-empty yay -S --noconfirm ;;
+        wsl)
+            python "$HOME/inventory/parser.py" packages wsl yay | xargs --no-run-if-empty yay -S --noconfirm
+            python "$HOME/inventory/parser.py" packages wsl pip3 | xargs --no-run-if-empty pip3 install --break-system-packages
+            ;;
 
         pi)
-            $CURL \
-                https://raw.githubusercontent.com/jsec02/packages/master/pi/apt.txt \
-                | xargs --no-run-if-empty sudo apt install --yes
+            python "$HOME/inventory/parser.py" packages pi apt | xargs --no-run-if-empty sudo apt insall --yes
+            python "$HOME/inventory/parser.py" packages pi pip3 | xargs --no-run-if-empty pip3 install --break-system-packages
             ;;
 
         kali)
-            $CURL \
-                https://raw.githubusercontent.com/jsec02/packages/master/kali/apt.txt \
-                | xargs --no-run-if-empty sudo apt install --yes
-
-            $CURL \
-                https://raw.githubusercontent.com/jsec02/packages/master/kali/pip3.txt \
-                | xargs --no-run-if-empty pip install --break-system-packages
-
+            python "$HOME/inventory/parser.py" packages kali apt | xargs --no-run-if-empty sudo apt insall --yes
             install_pip2
-            $CURL \
-                https://raw.githubusercontent.com/jsec02/packages/master/kali/pip2.txt \
-                | xargs --no-run-if-empty pip2 install
+            python "$HOME/inventory/parser.py" packages kali pip2 | xargs --no-run-if-empty pip2 install
+            python "$HOME/inventory/parser.py" packages kali pip3 | xargs --no-run-if-empty pip3 install --break-system-packages
             ;;
     esac
 }
@@ -200,21 +197,11 @@ prompt_for_secrets() {
 }
 
 restore_from_restic() {
-    local tags=(
-        "ssh" "wsl" "nftables" "services" "bash" "databases" "direnv" "dotfiles"
-        "helix" "history" "kakoune" "nvim" "powershell" "python" "sql"
-        "sqliterc" "vault" "yazi" "wt" "zellij" "zsh" "lightdm" "autostart"
-        "redshift" "wireguard" "navidrome" "packages" "fzf" "poc" "resolv" "networkmanager" "homepage" "inventory" "sudo" "git" "atuin" "qgmlwy"
-    )
-
-    local sudo_tags=("wsl" "nftables" "services" "lightdm" "wireguard" "navidrome" "resolv" "networkmanager" "sudo")
-
-    # Loop over tags array and restore corresponding restic snapshots using sudo when necesary
-    for tag in "${tags[@]}"; do
-        local cmd="restic"
-        [[ " ${sudo_tags[*]} " == *" $tag "* ]] && cmd="sudo --preserve-env restic"
-        $cmd restore latest --tag "$tag" --host "$MACHINE" --target / 2>/dev/null || true
-    done
+    while read -r tag sudo; do
+        local cmd=()
+        [[ "$sudo" == "true" ]] && cmd=(sudo)
+        "${cmd[@]}" restore latest --tag "$tag" --host "$MACHINE" --target / 2>/dev/null
+    done < <(python "$HOME/inventory/parser.py" tags "$MACHINE")
 
     # Fix cache permissions after sudo restores
     sudo chown -R "$USER:$USER" "$HOME/.cache/restic"
@@ -352,6 +339,7 @@ setup_wsl() {
     setup_locale
     update_system
     bootstrap_yay
+    bootstrap_inventory
     install_packages
     prompt_for_secrets
     restore_from_restic
@@ -364,6 +352,7 @@ setup_wsl() {
 setup_pi() {
     hush_login
     update_system
+    bootstrap_inventory
     install_packages
     install_optional_software
     prompt_for_secrets
@@ -380,6 +369,7 @@ setup_pi() {
 setup_kali() {
     hush_login
     update_system
+    bootstrap_inventory
     install_packages
     install_optional_software
     prompt_for_secrets
