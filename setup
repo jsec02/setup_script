@@ -23,7 +23,7 @@ select_machine() {
 
 setup_locale() {
     # Enable en_US.UTF-8 UTF-8
-    sudo sed --in-place 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' "/etc/locale.gen"
+    sudo sed --in-place 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' "/etc/locale.gen"
 
     # Compile en_US.UTF-8 UTF-8
     sudo locale-gen
