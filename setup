@@ -208,7 +208,7 @@ restore_from_restic() {
     while read -r tag sudo; do
         local cmd="restic"
         [[ "$sudo" == "true" ]] && cmd="sudo --preserve-env restic"
-        $cmd restore latest --tag "$tag" --host "$MACHINE" --target /
+        $cmd restore latest --tag "$tag" --host "$MACHINE" --target / </dev/null
     done < <(python "$HOME/inventory/parser.py" tags "$MACHINE")
 
     # Fix cache permissions after sudo restores
