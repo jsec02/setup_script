@@ -206,7 +206,7 @@ prompt_for_secrets() {
 restore_from_restic() {
     while read -r tag sudo; do
         local cmd=()
-        [[ "$sudo" == "true" ]] && cmd=(sudo)
+        [[ "$sudo" == "true" ]] && cmd=(sudo --preserve-env)
         "${cmd[@]}" restic restore latest --tag "$tag" --host "$MACHINE" --target / 2>/dev/null
     done < <(python "$HOME/inventory/parser.py" tags "$MACHINE")
 
