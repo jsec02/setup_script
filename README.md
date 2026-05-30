@@ -30,9 +30,9 @@ bash <(curl -sSL https://raw.githubusercontent.com/jsec02/setup_script/master/se
 Language                      files          blank        comment           code
 --------------------------------------------------------------------------------
 Bourne Again Shell                1             73             19            328
-Markdown                          1             11              4             25
+Markdown                          1             13              4             34
 --------------------------------------------------------------------------------
-SUM:                              2             84             23            353
+SUM:                              2             86             23            362
 --------------------------------------------------------------------------------
 ```
 <!-- CODE_STATISTICS_END -->
